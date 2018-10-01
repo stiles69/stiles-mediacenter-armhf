@@ -1,0 +1,51 @@
+version: '2'
+
+services:
+  sabnzdb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stiles/docker-sabnzdb-armhf
+    restart: always
+    ports:
+      - '9090:9090'
+      - '8080:8080'
+    volumes:
+      - "./config:/config"
+      - "/torrents/:/downloads"
+      - "/torrents/incomplete/:/incomplete-downloads"
+    environment:
+      - "PGID=1000"
+      - "PUID=1000"
+
+  couchpotato:
+    build:
+      context: ./couchpotato
+      dockerfile: Dockerfile
+    image: stiles/couchpotato
+    restart: always
+    ports:
+      - '5050:5050'
+    volumes: 
+      - "./couchpotato/config:/config"
+      - "/torrents/:/downloads/"
+      - "/torrents/completed/Movies/:/movies"
+    environment:
+      - "PGID=1000"
+      - "PUID=1000"
+
+  sickbeard:
+    build:
+      context: ./sickbeard
+      dockerfile: Dockerfile
+    image: stiles/sickbeard
+    restart: always
+    ports:
+      - '8081:8081'
+    volumes:
+      - "./sickbeard/config:/config"
+      - "/torrents/:/downloads"
+      - "/torrents/completed/TV-Shows/:/tv"
+    environment:
+      - "PGID=1000"
+      - "PUID=1000"
